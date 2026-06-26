@@ -27,6 +27,7 @@ func (c *APIClient) SetupRoutes() {
 		c.engine.GET("/api/channels/feed/share_url", c.handleFetchFeedShareUrl)
 		c.engine.GET("/api/channels/parse_sph", c.handleParseSph)
 		c.engine.GET("/rss/channels", c.handleFetchFeedListOfContactRSS)
+		c.engine.GET("/api/channels/get_live_info", c.handleGetLiveInfo)
 		// 公众号接口
 		c.engine.GET("/ws/mp", c.official.HandleWebsocket)
 		c.engine.GET("/ws/manage", c.official.HandleManageWebsocket)
@@ -102,7 +103,9 @@ func (c *APIClient) handleStatus(ctx *gin.Context) {
 		"available": false,
 	}
 	err := c.channels.Validate()
-	if err != nil {
+	if err == nil {
+		channels_data["available"] = true
+	} else {
 		channels_data["available"] = false
 	}
 	data := gin.H{

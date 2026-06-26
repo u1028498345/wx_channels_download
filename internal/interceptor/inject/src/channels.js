@@ -103,7 +103,23 @@ function ChannelsWebsocketClient() {
     connect_local_ws() {
       const ws_url = WXEnv.channelsWSURL;
       const ws = new WebSocket(ws_url);
+      window.__wx_channels_ws__ = ws;
+      window.__wx_channels_send_ws_response__ = function (id, body) {
+        if (!id || ws.readyState !== WebSocket.OPEN) {
+          return false;
+        }
+        try {
+          ws.send(JSON.stringify({ id, data: body }));
+          return true;
+        } catch (err) {
+          console.warn("[DOWNLOADER] send ws response failed", err);
+          return false;
+        }
+      };
       ws.onclose = (e) => {
+        if (window.__wx_channels_ws__ === ws) {
+          window.__wx_channels_ws__ = null;
+        }
         WXU.error({
           msg: `channels ws连接已关闭，reason: ${e.reason}，code: ${e.code}`,
         });
@@ -244,6 +260,16 @@ function ChannelsWebsocketClient() {
           ...r,
           payload,
         });
+        return;
+      }
+      if (key === "key:channels:get_live_info") {
+        if (!data || !data.url) {
+          resp({ errCode: 1011, errMsg: "missing url", payload: null });
+          return;
+        }
+        const pageURL = new URL(data.url, window.location.href);
+        pageURL.searchParams.set("did", id);
+        window.location.href = pageURL.toString();
         return;
       }
       if (key === "key:channels:fetch_feed_comment_list") {

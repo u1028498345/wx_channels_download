@@ -100,6 +100,19 @@ function __wx_attach_live_download_dropdown_menu(trigger, options) {
   return dropdown$;
 }
 
+function __wx_reply_live_info_to_control(profile, live) {
+  const did = new URLSearchParams(window.location.search).get("did");
+  const send = window.__wx_channels_send_ws_response__;
+  if (!did || typeof send !== "function") {
+    return;
+  }
+  if (profile && profile.liveInfo && profile.liveInfo.liveStatus === 1 && live) {
+    send(did, live);
+  } else if (profile && profile.liveInfo && profile.liveInfo.liveStatus === 2) {
+    send(did, profile);
+  }
+}
+
 (() => {
   var error_tip_timer = setTimeout(() => {
     WXU.error({ msg: "没有捕获到视频详情", alert: 0 });
@@ -185,10 +198,12 @@ function __wx_attach_live_download_dropdown_menu(trigger, options) {
     console.log("[live.js]onFetchFeedProfile", data);
     profile = data;
     handleLoaded(profile, live);
+    __wx_reply_live_info_to_control(profile, live);
   });
   WXU.onJoinLive(async (data) => {
     console.log("[live.js]onJoinLive", JSON.stringify(data));
     live = data;
     handleLoaded(profile, live);
+    __wx_reply_live_info_to_control(profile, live);
   });
 })();

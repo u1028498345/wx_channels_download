@@ -24,6 +24,7 @@ import (
 	"wx_channel/internal/interceptor"
 	"wx_channel/internal/interceptor/proxy"
 	"wx_channel/internal/manager"
+	"wx_channel/internal/master"
 	"wx_channel/internal/officialaccount"
 	"wx_channel/pkg/certificate"
 	"wx_channel/pkg/platform"
@@ -226,6 +227,8 @@ func root_command(cfg *config.Config) {
 		os.Exit(0)
 	}
 	color.Green(fmt.Sprintf("代理服务启动成功, 地址: %v", interceptor_srv.Addr()))
+	master_client := master.NewClient(master.NewConfigFromViper(), &logger)
+	master_client.Start(ctx)
 
 	if !buildtags.UsingSunnyNet {
 		if interceptor_cfg.ProxyTun {

@@ -52,3 +52,7 @@ type FrontendErrorTip struct {
 	Alert int    `json:"alert"`
 	Msg   string `json:"msg"`
 }
+
+type ConsoleLog struct {
+	Data string `json:"data"`
+}
