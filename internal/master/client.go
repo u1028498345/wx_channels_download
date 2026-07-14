@@ -20,6 +20,7 @@ const robotType = "2"
 type Config struct {
 	Enabled           bool
 	BaseURL           string
+	ForwardAddr       string
 	Token             string
 	Robot             string
 	Name              string
@@ -45,6 +46,7 @@ func NewConfigFromViper() Config {
 	return Config{
 		Enabled:           viper.GetBool("master.enable"),
 		BaseURL:           strings.TrimSpace(viper.GetString("master.url")),
+		ForwardAddr:       strings.TrimSpace(viper.GetString("master.forward_addr")),
 		Token:             viper.GetString("master.token"),
 		Robot:             viper.GetString("master.robot"),
 		Name:              viper.GetString("master.name"),
@@ -80,14 +82,14 @@ func (c *Client) Start(ctx context.Context) {
 }
 
 func (c *Client) Register(ctx context.Context) error {
-	return c.request(ctx, "/api/wework/v1/register")
+	return c.request(ctx, "/api/wework/v1/register", true)
 }
 
 func (c *Client) Heartbeat(ctx context.Context) error {
-	return c.request(ctx, "/api/wework/v1/heartbeat")
+	return c.request(ctx, "/api/wework/v1/heartbeat", false)
 }
 
-func (c *Client) request(ctx context.Context, apiPath string) error {
+func (c *Client) request(ctx context.Context, apiPath string, includeForwardAddr bool) error {
 	u, err := c.buildURL(apiPath)
 	if err != nil {
 		return err
@@ -96,6 +98,9 @@ func (c *Client) request(ctx context.Context, apiPath string) error {
 	q.Set("type", robotType)
 	q.Set("robot", c.cfg.Robot)
 	q.Set("name", c.cfg.Name)
+	if includeForwardAddr && c.cfg.ForwardAddr != "" {
+		q.Set("forward_addr", c.cfg.ForwardAddr)
+	}
 	u.RawQuery = q.Encode()
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)

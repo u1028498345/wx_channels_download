@@ -1,6 +1,6 @@
 module wx_channel
 
-go 1.22
+go 1.23.0
 
 exclude (
 	github.com/andybalholm/brotli v1.2.0

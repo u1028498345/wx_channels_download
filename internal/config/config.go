@@ -543,6 +543,14 @@ func (c *Config) LoadConfig() error {
 		Group:       "Master",
 	})
 	Register(ConfigItem{
+		Key:         "master.forward_addr",
+		Type:        ConfigTypeString,
+		Default:     "",
+		Description: "供 master 访问本节点的转发地址；未配置时不传递",
+		Title:       "节点转发地址",
+		Group:       "Master",
+	})
+	Register(ConfigItem{
 		Key:         "master.token",
 		Type:        ConfigTypeString,
 		Default:     "",

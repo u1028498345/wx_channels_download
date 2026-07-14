@@ -151,12 +151,17 @@ func (c *ChannelsClient) Broadcast(v interface{}) {
 	}
 }
 func (wc *ChannelsClient) Validate() error {
-	// wc.clientsMu.Lock()
-	// defer wc.clientsMu.Unlock()
-	if len(wc.ws_clients) == 0 {
+	if wc.AvailableCount() == 0 {
 		return errors.New("请先初始化客户端 socket 连接")
 	}
 	return nil
+}
+
+// AvailableCount 返回当前已连接的 channels 客户端数量。
+func (c *ChannelsClient) AvailableCount() int {
+	c.ws_mu.RLock()
+	defer c.ws_mu.RUnlock()
+	return len(c.ws_clients)
 }
 func (c *ChannelsClient) RequestFrontend(endpoint string, body interface{}, timeout time.Duration) (*ClientWebsocketResponse, error) {
 	if err := c.Validate(); err != nil {

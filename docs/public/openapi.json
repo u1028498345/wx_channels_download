@@ -26,6 +26,9 @@
     }
   ],
   "paths": {
+    "/api/channels/node_status": {
+      "$ref": "./openapi/paths/api_channels_node_status.json"
+    },
     "/api/channels/contact/search": {
       "$ref": "./openapi/paths/api_channels_contact_search.json"
     },

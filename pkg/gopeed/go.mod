@@ -1,6 +1,6 @@
 module github.com/GopeedLab/gopeed
 
-go 1.22
+go 1.23.0
 
 require (
 	github.com/matoous/go-nanoid/v2 v2.0.0

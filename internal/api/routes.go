@@ -84,6 +84,7 @@ func (c *APIClient) SetupRoutes() {
 	c.engine.GET("/mp/home", c.official.HandleOfficialAccountManagerHome)
 	// 其他
 	c.engine.GET("/api/status", c.handleStatus)
+	c.engine.GET("/api/channels/node_status", c.handleChannelsNodeStatus)
 	// c.engine.GET("/api/test", c.handleTest)
 
 	c.engine.NoRoute(func(ctx *gin.Context) {
@@ -116,5 +117,18 @@ func (c *APIClient) handleStatus(ctx *gin.Context) {
 		"code": 0,
 		"msg":  "ok",
 		"data": data,
+	})
+}
+
+// handleChannelsNodeStatus 返回当前节点可用的 channels 客户端数量。
+func (c *APIClient) handleChannelsNodeStatus(ctx *gin.Context) {
+	availableCount := c.channels.AvailableCount()
+	ctx.JSON(http.StatusOK, gin.H{
+		"code": 0,
+		"msg":  "ok",
+		"data": gin.H{
+			"available": availableCount > 0,
+			"channels":  availableCount,
+		},
 	})
 }

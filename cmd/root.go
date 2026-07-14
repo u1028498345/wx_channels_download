@@ -83,6 +83,7 @@ var root_cmd = &cobra.Command{
 			os.Exit(0)
 		}
 		CertFiles = config.LoadCertFiles()
+		fmt.Println("使用证书:" + CertFiles.Name)
 		return nil
 	},
 	PreRun: func(cmd *cobra.Command, args []string) {

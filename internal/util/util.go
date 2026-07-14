@@ -54,7 +54,7 @@ var errMsgMap = map[int][2]string{
 }
 
 type Response struct {
-	Code int         `json:"code"`
+	Code int         `json:"status"`
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data,omitempty"`
 }
